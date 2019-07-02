@@ -1415,11 +1415,11 @@ func maxSubArray(_ nums: [Int]) -> Int {
 
 //https://leetcode.com/problems/spiral-matrix/
 
-let input = [
-    [ 1, 2, 3 ],
-    [ 4, 5, 6 ],
-    [ 7, 8, 9 ]
-]
+//let input = [
+//    [ 1, 2, 3 ],
+//    [ 4, 5, 6 ],
+//    [ 7, 8, 9 ]
+//]
 
 func spiralOrder(_ matrix: [[Int]]) -> [Int] {
     var result = [Int]()
@@ -1489,6 +1489,383 @@ func spiralOrder(_ matrix: [[Int]]) -> [Int] {
     return result
 }
 
-print(spiralOrder(input))
+//print(spiralOrder(input))
+
+//https://leetcode.com/problems/jump-game/
+
+//let input = [0]
+
+func canJump(_ nums: [Int]) -> Bool {
+    var maxSteps = 1
+    for i in 0..<nums.count - 1 {
+        maxSteps -= 1
+        let number = nums[i]
+        if number > maxSteps {
+            maxSteps = number
+        }
+        if maxSteps <= 0 {
+            return false
+        }
+    }
+    return true
+}
+
+//print(canJump(input))
+
+//https://leetcode.com/problems/merge-intervals/
+
+//let input = [[2,3],[2,2],[3,3],[1,3],[5,7],[2,2],[4,6]]
+
+/*func merge(_ intervals: [[Int]]) -> [[Int]] {
+    var returnResult = [[Int]]()
+    let executed = ableToMergedWithOthers(intervals)
+    var go = executed.1
+    var input = executed.0
+    while input.count > 0 {
+        while go {
+            let executed = ableToMergedWithOthers(input)
+            go = executed.1
+            input = executed.0
+        }
+        returnResult.append(input.first!)
+        input.remove(at: 0)
+        let executed = ableToMergedWithOthers(input)
+        go = executed.1
+        input = executed.0
+    }
+
+    return returnResult
+}
+
+func ableToMergedWithOthers(_ intervals: [[Int]]) -> ([[Int]], Bool) {
+    var returnResult = intervals
+    let count = intervals.count
+    if count > 1 {
+        if let firstElement = intervals.first {
+            for i in 1..<count {
+                let other = intervals[i]
+                if let result = ableToMerged((firstElement, other)) {
+                    returnResult.remove(at: 0)
+                    returnResult.remove(at: i - 1)
+                    returnResult.insert(result, at: 0)
+                    return (returnResult, true)
+                }
+            }
+        }
+    }
+    return (intervals,false)
+
+}
+
+func ableToMerged(_ intervals: ([Int],[Int])) -> ([Int]?) {
+    let rangeA = intervals.0
+    let rangeB = intervals.1
+    let rangeAMin = rangeA[0]
+    let rangeAMax = rangeA[1]
+    let rangeBMin = rangeB[0]
+    let rangeBMax = rangeB[1]
+    if (rangeAMax < rangeBMin) || rangeBMax < rangeAMin {
+        return (nil)
+    } else {
+        return [min(rangeAMin, rangeBMin), max(rangeAMax, rangeBMax)]
+    }
+}*/
+
+
+//print(merge(input))
+
+
+//https://leetcode.com/problems/merge-intervals/
+// another method to solve this problem
+//let input = [[2,3],[2,2],[3,3],[1,3],[5,7],[2,2],[4,6],[1,4]]
+
+func merge(_ intervals: [[Int]]) -> [[Int]] {
+    let input = intervals.sorted { (a, b) -> Bool in
+        if a[0] > b[0] {
+            return false
+        } else if a[0] < b[0] {
+            return true
+        } else {
+            return a[1] < b[1]
+        }
+    }
+    print(input)
+    if input.count > 0 {
+        var result = [[Int]]()
+        var start = input[0][0]
+        var end = input[0][1]
+        for i in 1..<input.count {
+            let range = input[i]
+            let secondStart = range[0]
+            let secondEnd = range[1]
+            if secondStart == start {
+                end = max(end, secondEnd)
+                continue
+            } else {
+                if secondEnd < end {
+                    continue
+                } else if secondStart <= end {
+                    end = max(end, secondEnd)
+                } else if secondEnd > end {
+                    result.append([start, end])
+                    start = secondStart
+                    end = secondEnd
+                }
+            }
+        }
+        result.append([start, end])
+        return result
+    }
+    return intervals
+}
+//print(merge(input))
+
+
+//https://leetcode.com/problems/rotate-list/
+//let input = arryToList(array: [1,2,3,4,5])
+func rotateRight(_ head: ListNode?, _ k: Int) -> ListNode? {
+    if let head = head {
+        var result = head
+        var map = [ListNode]()
+        map.append(head)
+        var next = head.next
+        while next != nil {
+            map.append(next!)
+            if next?.next == nil {
+                next?.next = head
+                break
+            } else {
+                next = next?.next
+            }
+        }
+        let count = map.count - k % map.count
+        if count == map.count {
+            result = map[0]
+        } else {
+            result = map[count]
+        }
+        if count == 0 {
+            map[map.count - 1].next = nil
+        } else {
+            map[count - 1].next = nil
+        }
+        return result
+    }
+    return nil
+}
+
+//print(listToArray(head: rotateRight(input, 0)))
+
+//https://leetcode.com/problems/unique-paths/
+func uniquePaths(_ m: Int, _ n: Int) -> Int {
+    if m == 1 || n == 1{
+        return 1
+    } else {
+        return uniquePaths(m - 1, n) + uniquePaths(m, n - 1)
+    }
+}
+
+//print(uniquePaths(3, 3))
+
+//https://leetcode.com/problems/partition-list/
+//let input = arryToList(array: [1,4,3,2,5,2])
+func partition(_ head: ListNode?, _ x: Int) -> ListNode? {
+    if let head = head {
+        var greaterHead: ListNode? = nil
+        var greater: ListNode? = nil
+        var lesser: ListNode? = nil
+        var lesserHead: ListNode? = nil
+        var nextCruise: ListNode? = head
+        while let next = nextCruise {
+            if next.val < x {
+                if lesserHead == nil {
+                    lesserHead = next
+                    lesser = next
+                } else {
+                    lesser?.next = next
+                    lesser = next
+                }
+            } else {
+                if greaterHead == nil {
+                    greaterHead = next
+                    greater = next
+                } else {
+                    greater?.next = next
+                    greater = next
+                }
+            }
+
+            nextCruise = next.next
+        }
+        lesser?.next = greaterHead
+        greater?.next = nil
+        if lesserHead == nil {
+            return head
+        }
+        return lesserHead
+    }
+    return head
+}
+
+//print(listToArray(head: partition(input, 3)))
+
+//https://leetcode.com/problems/3sum/
+let input = [-1,0,1]
+func threeSum(_ nums: [Int]) -> [[Int]] {
+    var result = [[Int]]()
+    let preNums = prePareNums(nums)
+    let first = preNums.0
+    let second = preNums.1
+    let third = preNums.2
+    if second.count >= 3 {
+        result.append([0,0,0])
+    } else if second.count > 0 {
+        for i in first {
+            for j in third {
+                if i + j == 0 {
+                    if !result.contains([i, 0 ,j]) {
+                        result.append([i, 0, j])
+                    }
+                }
+            }
+        }
+    }
+    if first.count > 0 && third.count > 0 {
+        let firstCouples = coupleFromArray(first)
+        let thirdCouples = coupleFromArray(third)
+        if let fistCoupleWithThird = coupleWithArray(third, couples: firstCouples) {
+            result.append(contentsOf: fistCoupleWithThird)
+        }
+        if let thirdCoupleWithThird = coupleWithArray(first, couples: thirdCouples) {
+            result.append(contentsOf: thirdCoupleWithThird)
+        }
+    }
+
+    return result
+}
+
+func coupleFromArray(_ nums:[Int]) -> [(Int, Int)] {
+    var result = [(Int, Int)]()
+    let length = nums.count
+    for i in 0..<length {
+        for j in i+1..<length {
+            result.append((nums[i], nums[j]))
+        }
+    }
+
+    return result
+}
+
+func coupleWithArray(_ nums: [Int], couples: [(Int, Int)]) -> [[Int]]? {
+    var result = [[Int]]()
+    let length = nums.count
+    for couple in couples {
+        for i in 0..<length {
+            if couple.0 + couple.1 + nums[i] == 0 {
+                result.append([couple.0, couple.1, nums[i]])
+            }
+        }
+    }
+    if result.count > 0 {
+        return result
+    } else {
+        return nil
+    }
+
+}
+
+func sumByCount(_ nums: [Int], sum: Int, count: Int) -> [[Int]]? {
+    let length = nums.count
+    var result = [[Int]]()
+    for i in 0..<length {
+        let compare = nums[i]
+        if count == 1 {
+            if compare == sum {
+                result.append([compare])
+            }
+        } else {
+            let restArray = Array(nums.dropFirst(i+1))
+            let nextSum = sum - compare
+            if let restResult = sumByCount(restArray, sum: nextSum, count: count-1) {
+                for restArray in restResult {
+                    var array = [compare]
+                    array.append(contentsOf: restArray)
+                    result.append(array)
+                }
+            }
+        }
+    }
+    if result.count > 0 {
+        return result
+    } else {
+        return nil
+    }
+}
+
+func prePareNums(_ nums: [Int]) -> ([Int], [Int], [Int]) {
+    var preNums = [Int]()
+    var sortedNums = nums.sorted()
+    var startZero = -1
+    var moreThanZeroIndex = -1
+    if sortedNums.count > 0 {
+        var lastNum = sortedNums[0]
+        if lastNum == 0 {
+            startZero = 0
+        } else if lastNum > 0 {
+            moreThanZeroIndex = 0
+        }
+        var isUpToTwo = false
+        preNums.append(lastNum)
+        for i in 1..<sortedNums.count {
+            let num = sortedNums[i]
+            if num == 0 {
+                if startZero == -1 {
+                    startZero = preNums.count
+                }
+                preNums.append(num)
+                continue
+            }
+            if num > 0 && startZero == -1 {
+                startZero = preNums.count
+            }
+            if num > 0 && moreThanZeroIndex == -1 {
+                moreThanZeroIndex = preNums.count
+            }
+            if num == lastNum {
+                if isUpToTwo {
+                    continue
+                } else {
+                    preNums.append(num)
+                    isUpToTwo = true
+                }
+            } else {
+                lastNum = num
+                isUpToTwo = false
+                preNums.append(num)
+            }
+        }
+    }
+
+    var firstArray = [Int]()
+    var zeroArray = [Int]()
+    var lastArray = [Int]()
+    if startZero == -1 {
+        startZero = preNums.count
+    }
+    if moreThanZeroIndex == -1 {
+        moreThanZeroIndex = preNums.count
+    }
+    firstArray = Array(preNums[0...startZero-1])
+    if moreThanZeroIndex > startZero {
+        zeroArray = Array(preNums[startZero...moreThanZeroIndex-1])
+    }
+    if preNums.count > moreThanZeroIndex {
+        lastArray = Array(preNums[moreThanZeroIndex...preNums.count-1])
+    }
+    return (firstArray,zeroArray,lastArray)
+}
+
+
+print(threeSum(input))
 
 

@@ -23,13 +23,15 @@ func arryToList(array: [Int]) -> ListNode? {
     }
 }
 
-func listToArray(head: ListNode) -> [Int] {
+func listToArray(head: ListNode?) -> [Int] {
     var array = [Int]()
-    var temp = head
-    array.append(head.val)
-    while temp.next != nil {
-        array.append((temp.next?.val)!)
-        temp = temp.next!
+    if let head = head {
+        var temp = head
+        array.append(head.val)
+        while temp.next != nil {
+            array.append((temp.next?.val)!)
+            temp = temp.next!
+        }
     }
 
     return array
